@@ -1,29 +1,36 @@
-. Single Shot Detector (SSD) 
-7.1 Introduction 
+Single Shot Detector (SSD) 
+1 Introduction 
 In recent times, there is more emphasis on research in a field of object detection. Object detection is quite different than image detection as we can predict the location of the object in an image in object detection. The current state of art uses various methods for object detection and improved classification. Recent research is based on Faster R-CNN architecture which comprises high computational cost which is not feasible option of embedded systems. For Faster RCNN we need to have two shot detection, one for generating region proposals and another for object detection. Faster R-CNN has 7 FPS (frames per second). 
-7.2 Concept: - 
+2 Concept: - 
 Earlier object detection designs used two independent stages: a classifier to identify the sorts of items in the suggested regions, and a region proposal network to accomplish object localisation. These can be exceedingly expensive to compute, making them unsuitable for realworld, time-sensitive applications. Single-shot models enable the deployment of less hardware while encapsulating both localization and detection duties in a single forward sweep of the network. 
 SSD only need images and ground truth boxes as an input, and it will detect the object with confidence score for classification. SSD uses the series of convolution to learn different features through an input. 
-  
-Fig 7.1:- Object detection principle of SSD [16] 
+![image](https://user-images.githubusercontent.com/91695139/198105034-acff1abc-b8c8-448e-a27b-85090147172a.png)  
+Fig1:- Object detection principle of SSD [16] 
 SSD divide the image into number of symmetrical grids and feature maps.In convulution network we will evaluate different types of aspect ratio in different scales at each of the loaction on grids.The different scales are used to map the object with different size and shapes (e.g. 16×16, 8×8).for each of the default boxes we will calculate the confidence score and location coordinate for each default boxes.The boxes which have highest probality in confidence of having certain class is examined by using non max suppresion.The samples below certain confidence level is referred as negatives and rest are positives.The model is then improved by using the gradient decent algorithm.  
 Input parameters and Bounding boxes:- 
 The SSD model has two types i.e. SSD-300, SSD-512.The suffixes just shows the input image size for SSD architecture.As in a project we are using SSD 300, we have imput size of 300×300. Bounding boxes represent the postion of the object in 2D plane with the labels.The bounding boxes can be represnted in different formats e.g. PASCAL VOC,YOLO.  
 In pascal voc format the boundary coordinates is represented by using X-Y coordinates (X_min,Y_min,X_max,Y_max).In YOLO format the boundary coordinates is represented by centre parameter  and size of an an image (Cx,Cy,w,h). 
- 
+![image](https://user-images.githubusercontent.com/91695139/198105230-c24998ff-efbd-4f89-88a1-22d436255ca4.png)
+ ![image](https://user-images.githubusercontent.com/91695139/198105255-2bba93b0-84f2-4184-8038-5ceb8049bff1.png)
+
 Intersection Over Union:- 
-The term IOU is used to describe the amount of overlap between two boxes.It is also used to express the accuracy of a detector and also called as Jaccard Index. If the bounding box aligns with object perfectly then IOU will be one and vice versa. IOU more than 0.90 will be considered perfect in practical. 
+The term IOU is used to describe the amount of overlap between two boxes.It is also used to express the accuracy of a detector and also called as Jaccard Index. If the bounding box aligns with object perfectly then IOU will be one and vice versa. IOU more than 0.90 will be considered perfect in practical.
+<img width="248" alt="image" src="https://user-images.githubusercontent.com/91695139/198105432-b1aa891e-01df-418f-b982-6b34614042ce.png">
+
  
  
 7.3 SSD Model :-  
 SSD is purely convolutional network which we converted into three parts of convolutions i.e. Base convolution, Auxillary convolution and prediction convolution.Base convolution are used to extract low level features maps by using standerd convolution layer.Auxillary convolution are used extraxt the higher features maps which are added top of the first convolution where prediction convolution used to identify and locate the object. 
- 
+ ![image](https://user-images.githubusercontent.com/91695139/198105471-2530be89-7e1a-47de-8b1f-dc39156e0e73.png)
+
 Base convolution:- 
 VGG-16 architecture is used as base convolution which works well for lower level features extraction.As name suggest VGG 16 consist 16 convolutional layers for the feature extraction.It consist of 13 convolutional layers and 3 flatten layers.As for SSD, apart from the SSD developed by standerd research paper we converted last 3 fully conncted layers into convolutional layers. 
 In VGG 16 we are using 3×3 kernal for feature extraction with padding of 1.To reduce the non linearity we are using activation function RELU. To adjust the dimenstion of the image we are using maxpooling with stride of 2. In 3rd pooling layer we are using celling function to avoid any float value of channel (75/2 = 32.5). Any fully connected layer can be converted to an equivalent convolutional layer simply by reshaping its parameters [17]. We are converting last 3 fully connected layers into convolutional layers.  
  
 Auxiliary Convolution: - 
 Auxiliary convolution will give additional high-level feature and it staked above the base convolution layer. The feature map cumulatively smaller than the last feature map. We are using 4 layers of convolutional layer with 3×3 kernel. 
+<img width="381" alt="image" src="https://user-images.githubusercontent.com/91695139/198105936-a42d59db-f432-4ebe-93bf-116f16075fcd.png">
+
  
 Priors and Aspect Ratio: 
 Before creating the prediction convolution, it is very important to understand about the different prediction boxes and its aspect ratio. Object detection is very diverse that it can be at any shape at any position with infinite number of possibilities. We link multiple default boxes for each feature map on top of base network. Each feature map will calculate 4 offset distance with confidence score of the class. In our project we have three classes i.e., Car, Number Plate, background. 
@@ -36,6 +43,8 @@ In Defining the Priors authors recommend the following arguments:
 Where K~(1:M) and minimum scale (Smin) is 0.2 and maximum scale(Smax) is 0.9 and all the layers are equally spaced from each other. [16] 
  
 •	Priors will be in the ratios of 1:1, 2:1, and 1:2 for all feature maps. Conv7, Conv8_2, and Conv9_2 intermediate feature maps will likewise have priors with the ratios 3:1 and 1:3. All feature maps will also have an additional previous with a 1:1 aspect ratio and a scale equal to the geometric mean of the scales of the current and following feature maps. [16] 
+ <img width="374" alt="image" src="https://user-images.githubusercontent.com/91695139/198106220-8dd0808d-9ae8-4461-9f68-a075b5cebb2e.png">
+
  
  
  
