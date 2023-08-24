@@ -1,6 +1,7 @@
 import numpy as np
 from typing import Tuple, Union
 import torch
+import cv2
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 import numpy as np
