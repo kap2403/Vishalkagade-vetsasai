@@ -1,12 +1,13 @@
 from utils import optim
 from utils import model
+import cv2
 
 def compute_loss(output_classes, target_classes, output_boxes, target_boxes, device):
     
     n_batch = output_classes.shape[0]
     
-    positive_loss = 0
-    negative_loss = 0
+    positive_loss = 0.0
+    negative_loss = 0.0
     bbox_loss = 0
     for i_batch in range(n_batch):
         
@@ -25,4 +26,4 @@ def compute_loss(output_classes, target_classes, output_boxes, target_boxes, dev
             
     return positive_loss * 2 + negative_loss * 0.1 + bbox_loss * 4
 
-optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=0.001)
+optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=0.002)
